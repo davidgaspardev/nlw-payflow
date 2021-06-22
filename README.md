@@ -1,6 +1,10 @@
-# payflow
+<img src="lib/docs/images/banner.png" alt="Banner" />
 
-A new Flutter project.
+<br/>
+
+# PayFlow
+
+PayFlow is a mobile application project to manage user invoices, this project is encouraged and guided by **nlw together**.
 
 ## Getting Started
 
