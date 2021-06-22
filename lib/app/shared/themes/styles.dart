@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 /// Internal package
 import 'package:payflow/app/shared/themes/palette.dart';
 
-/// All text styles used in the app
+/// All text styles used by the app
 class  TextStyles {
 
   static final titleHome = GoogleFonts.lexendDeca(
