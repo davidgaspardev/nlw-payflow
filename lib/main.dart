@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:payflow/app/pages/splash/splash_page.dart';
 import 'package:payflow/app/shared/themes/palette.dart';
 
 void main() {
@@ -10,11 +11,14 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'PayFlow',
       theme: ThemeData(
         primaryColor: ColorPalette.primary
       ),
-      home: Container(),
+      initialRoute: SplashPage.routeName,
+      routes: {
+        SplashPage.routeName: (BuildContext context) => SplashPage()
+      },
     );
   }
 }
