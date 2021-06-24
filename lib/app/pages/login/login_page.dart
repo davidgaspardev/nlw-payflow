@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:payflow/app/helpers/dimensions.dart';
+import 'package:payflow/app/pages/login/login_controller.dart';
 import 'package:payflow/app/shared/themes/images.dart';
 import 'package:payflow/app/shared/themes/palette.dart';
 import 'package:payflow/app/shared/themes/styles.dart';
@@ -16,6 +17,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> with Dimensions {
+
+  final controller = LoginController();
 
   @override 
   Widget build(BuildContext context) {
@@ -94,18 +97,8 @@ class _LoginPageState extends State<LoginPage> with Dimensions {
 
                 // Button
                 GoogleLoginButton(
-                  onTap: () async {
-                    final GoogleSignIn googleSignIn = GoogleSignIn(
-                      scopes: [
-                        'email'
-                      ]
-                    );
-
-                    try {
-                      await googleSignIn.signIn();
-                    } catch(e) {
-                      print(e);
-                    }
+                  onTap: () {
+                    controller.googleSignIn(context);
                   },
                 )
               ],
