@@ -28,7 +28,16 @@ mixin Dimensions {
   double get heightLoginLogomini => heightScreen * 0.054;
 
   /// 7% of screen height
-  double get heightGoogleLoginButton => heightScreen * 0.07; 
+  double get heightGoogleLoginButton => heightScreen * 0.07;
+
+  /// 27.5% of screen height
+  double get heightHomeAppBar => heightScreen * 0.275;
+
+  /// 82% of [heightHomeAppBar]
+  double get heightHomeOrangeBlock => heightHomeAppBar * 0.82;
+
+  /// 9.85% of screen height
+  double get heightHomeCounter => heightScreen * 0.0985;
 
   // ==================== WIDTH ==================== //
 
@@ -41,6 +50,9 @@ mixin Dimensions {
   /// 75% of screen width
   double get widthGoogleLoginButton => widthScreen * 0.75;
 
+  /// 400% of [heightHomeCounter]
+  double get widthHomeCounter => heightHomeCounter * 4;
+
   // ==================== TOP ==================== //
 
   /// 2.5% of screen height
@@ -48,6 +60,9 @@ mixin Dimensions {
 
   /// 8.25% of screen height
   double get topLoginPergon => heightScreen * 0.0825;
+
+  /// 7.8% of screen height
+  double get topHomeUser => heightScreen * 0.078;
 
   // ==================== BOTTOM ==================== //
 
