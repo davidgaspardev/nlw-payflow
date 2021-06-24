@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:payflow/app/helpers/dimensions.dart';
 import 'package:payflow/app/shared/themes/images.dart';
 import 'package:payflow/app/shared/themes/palette.dart';
@@ -93,8 +94,18 @@ class _LoginPageState extends State<LoginPage> with Dimensions {
 
                 // Button
                 GoogleLoginButton(
-                  onTap: () {
-                    print("Clicked");
+                  onTap: () async {
+                    final GoogleSignIn googleSignIn = GoogleSignIn(
+                      scopes: [
+                        'email'
+                      ]
+                    );
+
+                    try {
+                      await googleSignIn.signIn();
+                    } catch(e) {
+                      print(e);
+                    }
                   },
                 )
               ],
