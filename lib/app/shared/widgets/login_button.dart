@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:payflow/app/helpers/dimensions.dart';
 import 'package:payflow/app/shared/themes/images.dart';
 import 'package:payflow/app/shared/themes/palette.dart';
 import 'package:payflow/app/shared/themes/styles.dart';
 
-class GoogleLoginButton extends StatelessWidget {
+class GoogleLoginButton extends StatelessWidget with Dimensions {
 
   final VoidCallback onTap;
 
@@ -18,8 +19,8 @@ class GoogleLoginButton extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Container(
-          width: size.width * 0.75,
-          height: size.height * 0.07,
+          width: widthGoogleLoginButton,
+          height: heightGoogleLoginButton,
           decoration: BoxDecoration(
             color: ColorPalette.shape,
             borderRadius: BorderRadius.circular(5),
@@ -30,8 +31,8 @@ class GoogleLoginButton extends StatelessWidget {
           child: Row(
             children: [
               Container(
-                width: size.height * 0.07,
-                height: size.height * 0.07,
+                width: heightGoogleLoginButton,
+                height: heightGoogleLoginButton,
                 alignment: Alignment.center,
                 child: Image.asset(ImagePaths.google),
               ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:payflow/app/helpers/dimensions.dart';
 import 'package:payflow/app/shared/themes/images.dart';
 import 'package:payflow/app/shared/themes/palette.dart';
 import 'package:payflow/app/shared/themes/styles.dart';
@@ -13,7 +14,7 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends State<LoginPage> with Dimensions {
 
   @override 
   Widget build(BuildContext context) {
@@ -28,17 +29,17 @@ class _LoginPageState extends State<LoginPage> {
           // Orange block
           Container(
             width: size.width,
-            height: size.height * 0.39,
+            height: heightLoginOrangeBlock,
             color: ColorPalette.primary,
           ),
 
           // Person image
           Positioned(
-            top: size.height * 0.0825,
-            left: (size.width / 2) - ((size.height * 0.46) * 0.557 / 2),
+            top: topLoginPergon,
+            left: leftLoginPeron,
             child: Container(
-              height: size.height * 0.46,
-              width: (size.height * 0.46) * 0.557,
+              height: heightLoginPerson,
+              width: widthLoginPerson,
               alignment: Alignment.bottomCenter,
               decoration: BoxDecoration(
                 image: DecorationImage(
@@ -47,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               child: Container(
-                height: size.height * 0.16,
+                height: heightLoginPersonBottomEffect,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
@@ -66,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
           Positioned(
             left: 0,
             right: 0,
-            bottom: size.height * 0.075,
+            bottom: bottomLoginContent,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -74,12 +75,15 @@ class _LoginPageState extends State<LoginPage> {
                 // Logo icon
                 Image.asset(
                   ImagePaths.logomini,
-                  height: size.height * 0.054,
+                  height: heightLoginLogomini,
                 ),
 
                 // Title
                 Padding(
-                  padding: EdgeInsets.only(top: size.height * 0.025, bottom: size.height * 0.04),
+                  padding: EdgeInsets.only(
+                    top: topLoginTitle, 
+                    bottom: bottomLoginTitle,
+                  ),
                   child: Text(
                     "Organize seus\nboletos em um\nsó lugar",
                     textAlign: TextAlign.center,

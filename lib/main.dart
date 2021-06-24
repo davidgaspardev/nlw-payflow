@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:payflow/app/helpers/dimensions.dart';
 import 'package:payflow/app/pages/login/login_page.dart';
 import 'package:payflow/app/pages/splash/splash_page.dart';
 import 'package:payflow/app/shared/themes/palette.dart';
@@ -18,7 +19,10 @@ class App extends StatelessWidget {
       ),
       initialRoute: LoginPage.routeName,
       routes: {
-        SplashPage.routeName: (BuildContext context) => SplashPage(),
+        SplashPage.routeName: (BuildContext context) {
+          Dimensions.init(context);
+          return SplashPage();
+        },
         LoginPage.routeName: (BuildContext context) => LoginPage(),
       },
     );
