@@ -16,14 +16,14 @@ class Application extends StatelessWidget {
       theme: ThemeData(
         primaryColor: ColorPalette.primary
       ),
-      initialRoute: LoginPage.routeName,
+      initialRoute: SplashPage.routeName,
       routes: {
+        LoginPage.routeName: (BuildContext context) => LoginPage(),
+        HomePage.routeName: (BuildContext context) => HomePage(),
         SplashPage.routeName: (BuildContext context) {
           Dimensions.init(context);
           return SplashPage();
         },
-        LoginPage.routeName: (BuildContext context) => LoginPage(),
-        HomePage.routeName: (BuildContext context) => HomePage(),
       },
     );
   }

@@ -1,23 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:payflow/app/models/user_model.dart';
 import 'package:payflow/app/pages/home/home_page.dart';
 import 'package:payflow/app/pages/login/login_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthController {
 
-  var _isAuthenticated = false;
-  var _user;
+  UserModel? _user;
 
-  get user => _user;
-  get isAuthenticated => _isAuthenticated;
+  UserModel get user => _user!;
 
-  void setUser(BuildContext context, var user) {
+  void setUser(BuildContext context, UserModel? user) {
     if(user != null) {
+      saveUser(user);
       _user = user;
-      _isAuthenticated = true;
       Navigator.pushReplacementNamed(context, HomePage.routeName);
     } else {
-      _isAuthenticated = false;
       Navigator.pushReplacementNamed(context, LoginPage.routeName);
+    }
+  }
+
+  Future<void> saveUser(UserModel user) async {
+    final instance = await SharedPreferences.getInstance();
+
+    await instance.setString("user", user.toJson());
+  }
+
+  Future<void> currentUser(BuildContext context) async {
+    final instance = await SharedPreferences.getInstance();
+    await Future.delayed(Duration(seconds: 2));
+    if(instance.containsKey("user")) {
+      final json = instance.get("user") as String;
+      setUser(context, UserModel.fromJson(json));
+    } else {
+      setUser(context, null);
     }
   }
 }
