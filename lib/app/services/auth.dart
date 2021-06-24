@@ -18,7 +18,7 @@ class AuthService {
     if(_instance != null) {
       if(!_instance!.containsKey(key)) return false;
 
-      _currentUser = UserData.fromMap(jsonDecode(_instance!.getString(key)!));
+      _currentUser = UserData.fromMap(Map<String, String>.from(jsonDecode(_instance!.getString(key)!)));
 
       return _currentUser != null;
 
