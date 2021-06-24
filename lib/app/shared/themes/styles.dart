@@ -19,7 +19,7 @@ class  TextStyles {
     decoration: TextDecoration.none,
     fontSize: 20,
     fontWeight: FontWeight.w400,
-    color: ColorPalette.heading,
+    color: ColorPalette.background,
   );
 
   static final titleBoldHeading = GoogleFonts.lexendDeca(
