@@ -1,27 +1,56 @@
+/// External package
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:payflow/app/auth/auth_controller.dart';
-import 'package:payflow/app/models/user_model.dart';
+/// Internal package
+import 'package:payflow/app/helpers/abstraction/controller.dart';
+import 'package:payflow/app/models/user_data.dart';
+import 'package:payflow/app/pages/home/home_page.dart';
+import 'package:payflow/app/services/auth.dart';
 
-class LoginController {
+/// Login Controller
+class LoginController extends Controller {
 
-  final authController = AuthController();
+  BuildContext? _context;
+  final authService = AuthService();
 
-  Future<void> googleSignIn(BuildContext context) async {
-    final GoogleSignIn login = GoogleSignIn(
-      scopes: [
-        'email'
-      ]
-    );
+  // ==================== SIGN IN ==================== //
 
-    try {
-      final GoogleSignInAccount? googleUser = await login.signIn();
-      if(googleUser == null) throw Exception("User is null");
-      final user = UserModel(name: googleUser.displayName!, picture: googleUser.photoUrl);
-      authController.setUser(context, user);
-    } catch(e) {
-      print(e);
+  bool _signingIn = false;
+
+  Future<void> signInGoogle() async {
+    if(!_signingIn) {
+      _signingIn = true;
+
+      final GoogleSignIn googleSignIn = GoogleSignIn(
+        scopes: [
+          'email'
+        ]
+      );
+
+      try {
+        final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+        // Checking if was a success 
+        if(googleUser == null) throw Exception("Failed with google_sign_in");
+        // Saving user
+        await authService.saveUser(UserData(name: googleUser.displayName!, picture: googleUser.photoUrl!));
+        // Navigate to home page
+        Navigator.of(_context!).pushReplacementNamed(HomePage.routeName);
+      } catch(e) {
+        print(e);
+        _signingIn = false;
+      }
     }
   }
 
+  // ==================== OVERRIDE ==================== //
+  
+  @override
+  void init(BuildContext context) {
+    _context ??= context;
+  }
+  
+  @override
+  void dispose() {
+    _context = null;
+  }
 }

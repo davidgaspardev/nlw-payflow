@@ -1,30 +1,35 @@
+/// External package
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+/// Internal package
 import 'package:payflow/app/helpers/dimensions.dart';
 import 'package:payflow/app/pages/login/login_controller.dart';
 import 'package:payflow/app/shared/themes/images.dart';
 import 'package:payflow/app/shared/themes/palette.dart';
 import 'package:payflow/app/shared/themes/styles.dart';
 import 'package:payflow/app/shared/widgets/login_button.dart';
+import 'package:payflow/app/shared/widgets/provider.dart';
 
-class LoginPage extends StatefulWidget {
+/// Login Page
+/// 
+/// Page responsible for providing an introduction to the app's functionality 
+/// and offers authentication with the Google service to use the app.
+class LoginPage extends StatelessWidget with Dimensions {
 
   /// Location of the page in the [MaterialApp] route engine
   static final String routeName = "/login";
 
-  @override
-  _LoginPageState createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> with Dimensions {
-
+  /// Page controller
   final controller = LoginController();
 
   @override 
   Widget build(BuildContext context) {
+    return Provider(
+      controller: controller, 
+      page: page
+    );
+  }
 
-    final size = MediaQuery.of(context).size;
-
+  Widget page() {
     return Container(
       color: ColorPalette.background,
       child: Stack(
@@ -32,7 +37,7 @@ class _LoginPageState extends State<LoginPage> with Dimensions {
 
           // Orange block
           Container(
-            width: size.width,
+            width: widthScreen,
             height: heightLoginOrangeBlock,
             color: ColorPalette.primary,
           ),
@@ -97,9 +102,7 @@ class _LoginPageState extends State<LoginPage> with Dimensions {
 
                 // Button
                 GoogleLoginButton(
-                  onTap: () {
-                    controller.googleSignIn(context);
-                  },
+                  onTap: controller.signInGoogle,
                 )
               ],
             ),

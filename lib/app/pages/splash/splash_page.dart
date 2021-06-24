@@ -1,6 +1,8 @@
 /// External package
 import 'package:flutter/material.dart';
-import 'package:payflow/app/auth/auth_controller.dart';
+import 'package:payflow/app/pages/home/home_page.dart';
+import 'package:payflow/app/pages/login/login_page.dart';
+import 'package:payflow/app/services/auth.dart';
 /// Internal packages
 import 'package:payflow/app/shared/themes/images.dart';
 import 'package:payflow/app/shared/themes/palette.dart';
@@ -12,9 +14,16 @@ class SplashPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("splash");
-    final authController = AuthController();
-    authController.currentUser(context);
+
+    final auth = AuthService();
+
+    auth.hasUser().then((hasUser) async {
+
+      await Future.delayed(Duration(seconds: 5));
+
+      Navigator.of(context).pushReplacementNamed(hasUser ? HomePage.routeName : LoginPage.routeName);
+    });
+
     return Container(
       color: ColorPalette.background,
       child: Stack(
