@@ -1,8 +1,11 @@
+/// Standard package
 import 'dart:convert';
-
-import 'package:payflow/app/models/user_data.dart';
+/// External package
 import 'package:shared_preferences/shared_preferences.dart';
+/// Internal package
+import 'package:payflow/app/models/user_data.dart';
 
+/// Auth Service
 class AuthService {
 
   final key = "user";
