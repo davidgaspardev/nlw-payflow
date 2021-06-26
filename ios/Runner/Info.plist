@@ -77,6 +77,9 @@
         <key>NSCameraUsageDescription</key>
         <string>You must use the camera to scan the barcode</string>
         
+        <key>NSPhotoLibraryUsageDescription</key>
+        <string>You must use the photo library to scan the barcode from boleto photo.</string>
+        
         <!--<key>NSMicrophoneUsageDescription</key>
         <string>Can I use the mic please?</string>-->
         
