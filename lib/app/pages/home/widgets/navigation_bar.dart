@@ -40,7 +40,7 @@ class NavigationBar extends StatelessWidget with Dimensions {
               Container(
                 child: IconButton(
                   onPressed: controller.myInvoices, 
-                  icon: Icon(Icons.book),
+                  icon: Icon(Icons.home),
                 ),
               ),
               Expanded(
