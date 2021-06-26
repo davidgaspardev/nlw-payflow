@@ -5,6 +5,18 @@ class HomeController extends Controller {
 
   BuildContext? _context;
 
+  void myInvoices() {
+    // TODO: Update page to show all
+  }
+
+  void toScan() {
+    // TODO: Navigate to scanner page
+  }
+
+  void myExtracts() {
+    // TODO: Update page to show only extracts
+  }
+
   // ==================== OVERRIDE ==================== //
   
   @override

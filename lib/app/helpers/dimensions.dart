@@ -39,6 +39,12 @@ mixin Dimensions {
   /// 24% of [widthHomeCounter]
   double get heightHomeCounter => widthHomeCounter * 0.24;
 
+  /// 39.5% of screen width
+  double get heightHomeNavigationBar => widthScreen * 0.395;
+
+  /// 37.5% of [heightHomeNavigationBar]
+  double get heightHomeNavigationBarContent => heightHomeNavigationBar * 0.375;
+
   // ==================== WIDTH ==================== //
 
   /// 100% of screen width
@@ -55,6 +61,14 @@ mixin Dimensions {
 
   /// 30.5% of [widthHomeCounter]
   double get widthHomeCounterIcon => widthHomeCounter * 0.305;
+
+  /// 58% of screen width
+  double get widthHomeNaviagtionBarContent => widthScreen * 0.58;
+
+  // ==================== MARGIN ==================== //
+
+  /// 24% of [heightHomeNavigationBar]
+  double get marginHomeNavigationBarContent => heightHomeNavigationBar * 0.24;
 
   // ==================== TOP ==================== //
 

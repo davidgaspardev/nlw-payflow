@@ -4,6 +4,7 @@ import 'package:flutter/material.dart' hide AppBar;
 import 'package:payflow/app/helpers/dimensions.dart';
 import 'package:payflow/app/pages/home/home_controller.dart';
 import 'package:payflow/app/pages/home/widgets/app_bar.dart';
+import 'package:payflow/app/pages/home/widgets/navigation_bar.dart';
 import 'package:payflow/app/shared/themes/palette.dart';
 import 'package:payflow/app/shared/widgets/provider.dart';
 
@@ -41,6 +42,11 @@ class HomePage extends StatelessWidget with Dimensions {
       child: Stack(
         children: [
           main(),
+
+          Positioned(
+            bottom: 0,
+            child: NavigationBar()
+          ),
         ],
       ),
     );
