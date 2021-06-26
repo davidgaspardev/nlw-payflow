@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:payflow/app/helpers/dimensions.dart';
+import 'package:payflow/app/shared/themes/images.dart';
 import 'package:payflow/app/shared/themes/palette.dart';
 import 'package:payflow/app/shared/themes/styles.dart';
 
@@ -28,7 +29,38 @@ class AppBar extends StatelessWidget with Dimensions {
             child: Container(
               width: widthHomeCounter,
               height: heightHomeCounter,
-              color: Colors.grey,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(radiusHomeCounter),
+                color: ColorPalette.heading,
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: widthHomeCounterIcon,
+                    height: heightHomeCounter,
+                    alignment: Alignment.center,
+                    child: Image.asset(ImagePaths.logomini),
+                  ),
+                  Container(
+                    width: 1,
+                    height: heightHomeCounter * 0.8,
+                    color: Colors.white,
+                  ),
+                  Expanded(
+                    child: Container(
+                      child: Text(
+                        "Você tem 14 boletos\ncadastrados para pagar",
+                        // style: TextStyles.titleBoldHeading
+                        style: TextStyle(
+                          decoration: TextDecoration.none,
+                          fontSize: 13,
+                          color: Colors.white
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
 
@@ -61,6 +93,7 @@ class AppBar extends StatelessWidget with Dimensions {
               ),
             ),
           ),
+
         ],
       ),
     );

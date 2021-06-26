@@ -30,14 +30,14 @@ mixin Dimensions {
   /// 7% of screen height
   double get heightGoogleLoginButton => heightScreen * 0.07;
 
-  /// 27.5% of screen height
-  double get heightHomeAppBar => heightScreen * 0.275;
+  /// 59% of screen width
+  double get heightHomeAppBar => widthScreen * 0.59;
 
   /// 82% of [heightHomeAppBar]
   double get heightHomeOrangeBlock => heightHomeAppBar * 0.82;
 
-  /// 9.85% of screen height
-  double get heightHomeCounter => heightScreen * 0.0985;
+  /// 24% of [widthHomeCounter]
+  double get heightHomeCounter => widthHomeCounter * 0.24;
 
   // ==================== WIDTH ==================== //
 
@@ -50,8 +50,11 @@ mixin Dimensions {
   /// 75% of screen width
   double get widthGoogleLoginButton => widthScreen * 0.75;
 
-  /// 400% of [heightHomeCounter]
-  double get widthHomeCounter => heightHomeCounter * 4;
+  /// 87% of screen width
+  double get widthHomeCounter => widthScreen * 0.87;
+
+  /// 30.5% of [widthHomeCounter]
+  double get widthHomeCounterIcon => widthHomeCounter * 0.305;
 
   // ==================== TOP ==================== //
 
@@ -75,4 +78,9 @@ mixin Dimensions {
   // ==================== LEFT ==================== //
 
   double get leftLoginPeron => widthScreen / 2 - widthLoginPerson / 2;
+
+  // ==================== RADIUS ==================== //
+
+  /// 7.5% of [heightHomeCounter]
+  double get radiusHomeCounter => heightHomeCounter * 0.075;
 }
