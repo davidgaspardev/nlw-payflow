@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:payflow/app/helpers/abstraction/controller.dart';
+import 'package:payflow/app/pages/scanner/scanner_page.dart';
 
 class HomeController extends Controller {
 
@@ -10,7 +11,7 @@ class HomeController extends Controller {
   }
 
   void toScan() {
-    // TODO: Navigate to scanner page
+    Navigator.pushNamed(_context!, ScannerPage.routeName);
   }
 
   void myExtracts() {
