@@ -74,7 +74,7 @@ mixin Dimensions {
   // ==================== MARGIN ==================== //
 
   /// 24% of [heightHomeNavigationBar]
-  double get marginHomeNavigationBarContent => heightHomeNavigationBar * 0.24;
+  double get marginHomeNavigationBarContent => heightHomeNavigationBar * 0.20;
 
   // ==================== TOP ==================== //
 
