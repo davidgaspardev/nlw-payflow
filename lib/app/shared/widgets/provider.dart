@@ -8,11 +8,13 @@ class Provider<T extends Controller> extends StatefulWidget {
 
   final T controller;
   final Page page;
+  final bool useMaterial;
 
   const Provider({
     Key? key,
     required this.controller,
-    required this.page
+    required this.page,
+    this.useMaterial = false
   }): super(key: key);
 
   /// Get controller
@@ -35,6 +37,7 @@ class _ProviderState extends State<Provider> {
 
   Page get page => this.widget.page;
   Controller get controller => this.widget.controller;
+  bool get useMaterial => this.widget.useMaterial;
 
   @override
   void initState() {
@@ -53,6 +56,10 @@ class _ProviderState extends State<Provider> {
     // Build/update page
     controller.build();
     // Retun page
+    if(useMaterial) return Material(
+      color: Colors.transparent,
+      child: page(),
+    );
     return page();
   }
 
