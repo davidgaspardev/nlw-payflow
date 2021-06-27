@@ -14,6 +14,7 @@ class Application extends StatelessWidget {
     return MaterialApp(
       title: 'PayFlow',
       theme: ThemeData(
+        primarySwatch: Colors.orange,
         primaryColor: ColorPalette.primary
       ),
       initialRoute: SplashPage.routeName,
