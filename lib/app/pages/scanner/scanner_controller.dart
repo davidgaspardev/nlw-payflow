@@ -170,5 +170,6 @@ class ScannerStatus {
   }
 
   bool get hasError => error.isNotEmpty;
-  bool get hasBarcode => error.isNotEmpty;
+  bool get hasBarcode => barcode.isNotEmpty;
+  bool get showCamera => isAvailable;
 }
