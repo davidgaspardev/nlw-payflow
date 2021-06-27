@@ -35,6 +35,7 @@ class BottomSheet extends StatelessWidget {
           ),
           Container(
             color: Colors.white,
+            width: double.infinity,
             padding: EdgeInsets.all(40),
             child: Text.rich(
               TextSpan(
