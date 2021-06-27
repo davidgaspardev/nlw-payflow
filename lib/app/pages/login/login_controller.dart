@@ -21,13 +21,12 @@ class LoginController extends Controller {
     if(!_signingIn) {
       _signingIn = true;
 
-      final GoogleSignIn googleSignIn = GoogleSignIn(
-        scopes: [
-          'email'
-        ]
-      );
-
       try {
+        final GoogleSignIn googleSignIn = GoogleSignIn(
+          scopes: [
+            'email'
+          ]
+        );
         final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
         // Checking if was a success 
         if(googleUser == null) throw Exception("Failed with google_sign_in");
