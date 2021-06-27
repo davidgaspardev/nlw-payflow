@@ -5,12 +5,18 @@ mixin Dimensions {
   // ==================== BOOT SETTING ==================== //
 
   static Size _size = Size.zero;
+  static double _heightStatusBar = 0;
 
   static void init(BuildContext context) {
-    if(_size == Size.zero) _size = MediaQuery.of(context).size;
+    if(_size == Size.zero) {
+      _size = MediaQuery.of(context).size;
+      _heightStatusBar = MediaQuery.of(context).padding.top;
+    }
   }
 
   // ==================== HEIGHT ==================== //
+
+  double get heightStatusBar => _heightStatusBar;
 
   /// 100% of screen height
   double get heightScreen => _size.height;
