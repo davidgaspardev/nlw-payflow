@@ -20,3 +20,37 @@ class ScannerController extends Controller {
     // TODO: implement dispose
   }
 }
+
+class ScannerStatus {
+
+  final bool isAvailable;
+  final String error;
+  final String barcode;
+
+  CameraController? cameraController;
+
+  ScannerStatus({
+    this.isAvailable = false,
+    this.error = "",
+    this.barcode = "",
+    this.cameraController
+  });
+
+  factory ScannerStatus.available(CameraController controller) {
+    return ScannerStatus(
+      cameraController: controller,
+      isAvailable: true,
+    );
+  }
+
+  factory ScannerStatus.error(String error) {
+    return ScannerStatus(error: error);
+  }
+
+  factory ScannerStatus.barcode(String barcode) {
+    return ScannerStatus(barcode: barcode);
+  }
+
+  bool get hasError => error.isNotEmpty;
+  bool get hasBarcode => error.isNotEmpty;
+}
