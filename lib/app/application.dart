@@ -19,12 +19,12 @@ class Application extends StatelessWidget {
       ),
       initialRoute: SplashPage.routeName,
       routes: {
-        LoginPage.routeName: (BuildContext context) => LoginPage(),
-        HomePage.routeName: (BuildContext context) => HomePage(),
         SplashPage.routeName: (BuildContext context) {
           Dimensions.init(context);
           return SplashPage();
         },
+        LoginPage.routeName: (BuildContext context) => LoginPage(),
+        HomePage.routeName: (BuildContext context) => HomePage(),
       },
     );
   }
