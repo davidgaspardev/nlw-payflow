@@ -1,9 +1,14 @@
+/// External package
+import 'dart:async';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image_picker/image_picker.dart';
+/// Internal package
 import 'package:payflow/app/helpers/abstraction/controller.dart';
+import 'package:payflow/app/pages/add/add_page.dart';
 
 /// Scanner Controller
 class ScannerController extends Controller {
@@ -11,18 +16,23 @@ class ScannerController extends Controller {
   BuildContext? _context;
 
   void back() {
-    Navigator.of(_context!).pop();
+    Navigator.of(_context!, rootNavigator: true).pop();
   }
 
-  final statusNotifier = ValueNotifier<ScannerStatus>(ScannerStatus());
-  ScannerStatus get status => statusNotifier.value;
-  set status(ScannerStatus status) => statusNotifier.value = status;
+  final errorNotifier = ValueNotifier<bool>(false);
+  String _error = "";
+  String get error => _error;
 
   // ==================== CAMERA ==================== //
 
+  /// barcode scanning API, you can read data encoded using most standard barcode formats.
+  /// See: https://developers.google.com/ml-kit/vision/barcode-scanning
   final barcodeScanner = GoogleMlKit.vision.barcodeScanner();
+  
+  CameraController? _cameraController;
 
-  Future<void> loadAvailableCamera() async {
+  /// Load camera
+  Future<CameraController> loadAvailableCamera() async {
     try {
       // Get all cameras available in the device
       final cameras = await availableCameras();
@@ -30,39 +40,47 @@ class ScannerController extends Controller {
       final camera = cameras.firstWhere((CameraDescription cameraDescription) {
         return cameraDescription.lensDirection == CameraLensDirection.back;
       });
-      // Create controller to scanner status
-      final cameraController = CameraController(
+      // Create and initilize camera controller
+      _cameraController = CameraController(
         camera, 
         ResolutionPreset.max, 
         enableAudio: false,
       );
-      status = ScannerStatus.available(cameraController);
+      await _cameraController!.initialize();
+    
       scanWithCamera();
+      return _cameraController as CameraController;
     } catch(e) {
-      status = ScannerStatus.error(e.toString());
+      throw Exception(e);
     }
   }
 
+  Timer? timeout;
+
   void scanWithCamera() {
-    Future.delayed(Duration(seconds: 10)).then((value) {
-      if(status.cameraController != null && status.cameraController!.value.isStreamingImages) {
-        status.cameraController!.stopImageStream();
-      }
-      status = ScannerStatus.error("Timeout de leitura de boleto");
+    if(errorNotifier.value) errorNotifier.value = false;
+    _startScannerStream();
+
+    if(timeout != null) timeout!.cancel();
+    timeout = Timer(Duration(seconds: 10), ()  {
+      _error = "Timeout de leitura de boleto";
+      errorNotifier.value = true;
+      timeout = null;
     });
-    listenCamera();
   }
 
   void scanWithImagePicker() async {
-    await status.cameraController!.stopImageStream();
+    await _cameraController!.stopImageStream();
     final response = await ImagePicker().getImage(source: ImageSource.gallery);
     final inputImage = InputImage.fromFilePath(response!.path);
     scannerBarcode(inputImage);
   }
 
-  void listenCamera() {
-    if(status.cameraController!.value.isStreamingImages == false) {
-      status.cameraController!.startImageStream((CameraImage cameraImage) async {
+  void _startScannerStream() {
+    // Check if already has stream in camera 
+    if(_cameraController!.value.isStreamingImages == false) {
+      _cameraController!.startImageStream((CameraImage cameraImage) async {
+        
         try {
           // Convert the camera image to a byte array
           final WriteBuffer allBytes = WriteBuffer();
@@ -73,7 +91,7 @@ class ScannerController extends Controller {
           final Size imageSize = Size(cameraImage.width.toDouble(), cameraImage.height.toDouble());
 
           final InputImageRotation inputImageRotation = InputImageRotation.Rotation_0deg;
-          final InputImageFormat inputImageFormat = InputImageFormatMethods.fromRawValue(cameraImage.format.raw) ?? InputImageFormat.NV21;
+          final InputImageFormat inputImageFormat = InputImageFormatMethods.fromRawValue(cameraImage.format.raw) ?? InputImageFormat.YUV420;
 
           final planeData = cameraImage.planes.map((Plane plane) {
             return InputImagePlaneMetadata(
@@ -96,7 +114,7 @@ class ScannerController extends Controller {
           );
 
           await Future.delayed(Duration(seconds: 3));
-          scannerBarcode(inputImageCamera);
+          await scannerBarcode(inputImageCamera);
         } catch(e) {
           print(e);
         }
@@ -106,24 +124,20 @@ class ScannerController extends Controller {
 
   Future<void> scannerBarcode(InputImage inputImage) async {
     try {
-      if(status.cameraController != null && status.cameraController!.value.isStreamingImages) {
-        status.cameraController!.stopImageStream();
-      }
-
       final barcodes = await barcodeScanner.processImage(inputImage);
       var barcode;
 
       for(Barcode item in barcodes) barcode = item.value.displayValue;
 
-      if(barcode != null && status.barcode.isEmpty) {
-        status = ScannerStatus.barcode(barcode);
-        status.cameraController!.dispose();
-      } else {
-        loadAvailableCamera();
-      }
+      if(barcode != null) toAddPage();
+
     } catch(e) {
       print(e);
     }
+  }
+
+  void toAddPage() {
+    Navigator.of(_context!).pushReplacementNamed(AddPage.routeName);
   }
 
   // ==================== OVERRIDE ==================== //
@@ -134,42 +148,16 @@ class ScannerController extends Controller {
   }
 
   @override
-  void dispose() {
-    // TODO: implement dispose
+  void dispose() async {
+    errorNotifier.dispose();
+    await barcodeScanner.close();
+    if(timeout != null) {
+     timeout!.cancel();
+     timeout = null;
+    }
+    if(_cameraController != null) {
+      if(_cameraController!.value.isStreamingImages) await _cameraController!.stopImageStream();
+      _cameraController!.dispose();
+    }
   }
-}
-
-class ScannerStatus {
-
-  final bool isAvailable;
-  final String error;
-  final String barcode;
-
-  CameraController? cameraController;
-
-  ScannerStatus({
-    this.isAvailable = false,
-    this.error = "",
-    this.barcode = "",
-    this.cameraController
-  });
-
-  factory ScannerStatus.available(CameraController controller) {
-    return ScannerStatus(
-      cameraController: controller,
-      isAvailable: true,
-    );
-  }
-
-  factory ScannerStatus.error(String error) {
-    return ScannerStatus(error: error);
-  }
-
-  factory ScannerStatus.barcode(String barcode) {
-    return ScannerStatus(barcode: barcode);
-  }
-
-  bool get hasError => error.isNotEmpty;
-  bool get hasBarcode => barcode.isNotEmpty;
-  bool get showCamera => isAvailable;
 }
