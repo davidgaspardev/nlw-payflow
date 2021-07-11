@@ -16,7 +16,7 @@ class ScannerController extends Controller {
   BuildContext? _context;
 
   void back() {
-    Navigator.of(_context!, rootNavigator: true).pop();
+    Navigator.of(_context!).pop();
   }
 
   final errorNotifier = ValueNotifier<bool>(false);
