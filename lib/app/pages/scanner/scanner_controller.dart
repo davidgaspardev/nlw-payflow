@@ -1,12 +1,12 @@
-/// External package
+/// Standard package
 import 'dart:async';
-
+/// External packages
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image_picker/image_picker.dart';
-/// Internal package
+/// Internal packages
 import 'package:payflow/app/helpers/abstraction/controller.dart';
 import 'package:payflow/app/pages/add/add_page.dart';
 
