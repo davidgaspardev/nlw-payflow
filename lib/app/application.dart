@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 /// Internal packages
 import 'package:payflow/app/helpers/dimensions.dart';
+import 'package:payflow/app/pages/add/add_page.dart';
 import 'package:payflow/app/pages/home/home_page.dart';
 import 'package:payflow/app/pages/login/login_page.dart';
 import 'package:payflow/app/pages/scanner/scanner_page.dart';
@@ -35,7 +36,8 @@ class Application extends StatelessWidget {
         },
         LoginPage.routeName: (BuildContext context) => LoginPage(),
         HomePage.routeName: (BuildContext context) => HomePage(),
-        ScannerPage.routeName: (BuildContext context) => ScannerPage()
+        ScannerPage.routeName: (BuildContext context) => ScannerPage(),
+        AddPage.routeName: (BuildContext context) => AddPage()
       },
     );
   }
