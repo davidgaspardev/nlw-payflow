@@ -12,8 +12,7 @@ class Header extends StatelessWidget with Dimensions {
     final controller = Provider.of<ScannerController>(context);
 
     return Container(
-      height: (50 + heightStatusBar),
-      padding: EdgeInsets.only(top: heightStatusBar),
+      height: 50,
       child: Row(
         children: [
           Container(
