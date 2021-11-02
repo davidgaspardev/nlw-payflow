@@ -30,35 +30,25 @@ class ScannerPage extends StatelessWidget {
         quarterTurns: 1,
         child: Stack(
           children: [
-
-            RotatedBox(
-              quarterTurns: -1,
-              child: FutureBuilder<CameraController>(
-                future: controller.loadAvailableCamera(),
-                builder: (BuildContext context, AsyncSnapshot<CameraController> asyncSnapshot) {
-                  if(asyncSnapshot.hasData) return asyncSnapshot.data!.buildPreview();
-                  return Container();
-                },
-              ),
-            ),
+            cameraImages(),            
             controls(),
-            ValueListenableBuilder<bool>(
-              valueListenable: controller.errorNotifier, 
-              builder: (_, hasError, __) {
-                if(hasError) return BottomSheet(
-                  title: "Não foi possível identificar um código de barras.",
-                  subtitle: "Tente escanear novamente ou digite o código do seu boleto.",
-                  leftLabel: "Escanear novamente",
-                  leftOnPressed: controller.scanWithCamera,
-                  rightLabel: "Digitar código",
-                  rightOnPressed: controller.toAddPage,
-                );
-
-                return Container();
-              }
-            ),
+            timeoutNotication()
           ],
         ),
+      ),
+    );
+  }
+
+  /// Widget responsible for showing the images coming from the camera
+  Widget cameraImages() {
+    return RotatedBox(
+      quarterTurns: -1,
+      child: FutureBuilder<CameraController>(
+        future: controller.loadCamera(),
+        builder: (BuildContext context, AsyncSnapshot<CameraController> asyncSnapshot) {
+          if(asyncSnapshot.hasData) return asyncSnapshot.data!.buildPreview();
+          return Container();
+        },
       ),
     );
   }
@@ -88,12 +78,30 @@ class ScannerPage extends StatelessWidget {
                 leftLabel: "Inserir código do boleto", 
                 leftOnPressed: () {},
                 rightLabel: "Adicionar da galeria", 
-                rightOnPressed: () {}, 
+                rightOnPressed: controller.scanWithImagePicker, 
               ),
-            )
+            ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget timeoutNotication() {
+    return ValueListenableBuilder<bool>(
+      valueListenable: controller.timeoutNotifier, 
+      builder: (_, limitedTime, __) {
+        if(limitedTime) return BottomSheet(
+          title: "Não foi possível identificar um código de barras.",
+          subtitle: "Tente escanear novamente ou digite o código do seu boleto.",
+          leftLabel: "Escanear novamente",
+          leftOnPressed: controller.hideTimeoutNotification,
+          rightLabel: "Digitar código",
+          rightOnPressed: controller.toAddPage,
+        );
+        
+        return Container();
+      }
     );
   }
 }

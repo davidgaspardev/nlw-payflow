@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 /// Internal packages
 import 'package:payflow/app/helpers/abstraction/controller.dart';
 import 'package:payflow/app/pages/add/add_page.dart';
+import 'package:payflow/app/pages/scanner/helpers/device_camera.dart';
 
 /// Scanner Controller
 class ScannerController extends Controller {
@@ -19,108 +20,112 @@ class ScannerController extends Controller {
     Navigator.of(_context!).pop();
   }
 
-  final errorNotifier = ValueNotifier<bool>(false);
-  String _error = "";
-  String get error => _error;
+  // ==================== TIMEOUT ==================== //
+
+  Timer? timeout;
+
+  final timeoutNotifier = ValueNotifier<bool>(false);
+  bool get isTimeoutNotification => timeoutNotifier.value;
+  void showTimeoutNotification() {
+    timeoutNotifier.value = true;
+  }
+  void hideTimeoutNotification() {
+    timeoutNotifier.value = false;
+    _startTimeout();
+  }
+
+  void _startTimeout() {
+    if(timeout != null) timeout!.cancel();
+    timeout = Timer(Duration(seconds: 10), ()  {
+      showTimeoutNotification();
+      timeout = null;
+    });
+  }
 
   // ==================== CAMERA ==================== //
-
-  /// barcode scanning API, you can read data encoded using most standard barcode formats.
-  /// See: https://developers.google.com/ml-kit/vision/barcode-scanning
-  final barcodeScanner = GoogleMlKit.vision.barcodeScanner();
   
-  CameraController? _cameraController;
+  // CameraController? _cameraController;
+  final camera = DeviceCamera();
 
   /// Load camera
-  Future<CameraController> loadAvailableCamera() async {
+  Future<CameraController> loadCamera() async {
     try {
-      // Get all cameras available in the device
-      final cameras = await availableCameras();
-      // Get the back camera from cameras available
-      final camera = cameras.firstWhere((CameraDescription cameraDescription) {
-        return cameraDescription.lensDirection == CameraLensDirection.back;
-      });
-      // Create and initilize camera controller
-      _cameraController = CameraController(
-        camera, 
-        ResolutionPreset.max, 
-        enableAudio: false,
-      );
-      await _cameraController!.initialize();
-    
+      await camera.initialize();
       scanWithCamera();
-      return _cameraController as CameraController;
+      return camera.controller;
     } catch(e) {
       throw Exception(e);
     }
   }
 
-  Timer? timeout;
-
   void scanWithCamera() {
-    if(errorNotifier.value) errorNotifier.value = false;
+    if(isTimeoutNotification) hideTimeoutNotification();
     _startScannerStream();
-
-    if(timeout != null) timeout!.cancel();
-    timeout = Timer(Duration(seconds: 10), ()  {
-      _error = "Timeout de leitura de boleto";
-      errorNotifier.value = true;
-      timeout = null;
-    });
+    _startTimeout();
   }
 
   void scanWithImagePicker() async {
-    await _cameraController!.stopImageStream();
-    final response = await ImagePicker().getImage(source: ImageSource.gallery);
-    final inputImage = InputImage.fromFilePath(response!.path);
-    scannerBarcode(inputImage);
+    await camera.stopImageStream();
+    final pickedFile = await ImagePicker().getImage(source: ImageSource.gallery);
+    if(pickedFile != null) {
+      final inputImage = InputImage.fromFilePath(pickedFile.path);
+      await scannerBarcode(inputImage);
+    } else {
+      scanWithCamera();
+    }
   }
 
   void _startScannerStream() {
-    // Check if already has stream in camera 
-    if(_cameraController!.value.isStreamingImages == false) {
-      _cameraController!.startImageStream((CameraImage cameraImage) async {
-        
-        try {
-          // Convert the camera image to a byte array
-          final WriteBuffer allBytes = WriteBuffer();
-          for(Plane plane in cameraImage.planes) allBytes.putUint8List(plane.bytes);
-          final bytes = allBytes.done().buffer.asUint8List();
+    camera.startImageStream((CameraImage cameraImage) async {
+      try {
+        // Convert the camera image to a byte array
+        final WriteBuffer allBytes = WriteBuffer();
+        for(Plane plane in cameraImage.planes) allBytes.putUint8List(plane.bytes);
+        final bytes = allBytes.done().buffer.asUint8List();
 
-          // Get the dimension of the image from the camera.
-          final Size imageSize = Size(cameraImage.width.toDouble(), cameraImage.height.toDouble());
+        // Get the dimension of the image from the camera.
+        final Size imageSize = Size(cameraImage.width.toDouble(), cameraImage.height.toDouble());
 
-          final InputImageRotation inputImageRotation = InputImageRotation.Rotation_0deg;
-          final InputImageFormat inputImageFormat = InputImageFormatMethods.fromRawValue(cameraImage.format.raw) ?? InputImageFormat.YUV420;
+        final InputImageRotation inputImageRotation = InputImageRotation.Rotation_0deg;
+        final InputImageFormat inputImageFormat = InputImageFormatMethods.fromRawValue(cameraImage.format.raw) ?? InputImageFormat.YUV420;
 
-          final planeData = cameraImage.planes.map((Plane plane) {
-            return InputImagePlaneMetadata(
-              bytesPerRow: plane.bytesPerRow,
-              height: plane.height,
-              width: plane.width
-            );
-          }).toList();
-
-          final inputImageData = InputImageData(
-            size: imageSize, 
-            imageRotation: inputImageRotation, 
-            inputImageFormat: inputImageFormat, 
-            planeData: planeData,
+        final planeData = cameraImage.planes.map((Plane plane) {
+          return InputImagePlaneMetadata(
+            bytesPerRow: plane.bytesPerRow,
+            height: plane.height,
+            width: plane.width
           );
+        }).toList();
 
-          final inputImageCamera = InputImage.fromBytes(
-            bytes: bytes, 
-            inputImageData: inputImageData,
-          );
+        final inputImageData = InputImageData(
+          size: imageSize, 
+          imageRotation: inputImageRotation, 
+          inputImageFormat: inputImageFormat, 
+          planeData: planeData,
+        );
 
-          await Future.delayed(Duration(seconds: 3));
-          await scannerBarcode(inputImageCamera);
-        } catch(e) {
-          print(e);
-        }
-      });
-    }
+        final inputImageCamera = InputImage.fromBytes(
+          bytes: bytes, 
+          inputImageData: inputImageData,
+        );
+
+        await Future.delayed(Duration(seconds: 3));
+        await scannerBarcode(inputImageCamera);
+      } catch(e) {
+        print(e);
+      }
+    });
   }
+
+  void toAddPage() {
+    Navigator.of(_context!).pushReplacementNamed(AddPage.routeName);
+  }
+
+  // ==================== SCANNER ==================== //
+
+  /// barcode scanning API, you can read data encoded using most standard barcode formats.
+  /// See: https://developers.google.com/ml-kit/vision/barcode-scanning
+  final barcodeScanner = GoogleMlKit.vision.barcodeScanner();
 
   Future<void> scannerBarcode(InputImage inputImage) async {
     try {
@@ -136,10 +141,6 @@ class ScannerController extends Controller {
     }
   }
 
-  void toAddPage() {
-    Navigator.of(_context!).pushReplacementNamed(AddPage.routeName);
-  }
-
   // ==================== OVERRIDE ==================== //
 
   @override
@@ -149,15 +150,12 @@ class ScannerController extends Controller {
 
   @override
   void dispose() async {
-    errorNotifier.dispose();
-    await barcodeScanner.close();
+    timeoutNotifier.dispose();
     if(timeout != null) {
      timeout!.cancel();
      timeout = null;
     }
-    if(_cameraController != null) {
-      if(_cameraController!.value.isStreamingImages) await _cameraController!.stopImageStream();
-      _cameraController!.dispose();
-    }
+    await barcodeScanner.close();
+    await camera.dispose();
   }
 }
